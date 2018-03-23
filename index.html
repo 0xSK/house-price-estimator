@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <title>House Price Estimator</title>
+      <!-- Bootstrap core CSS -->
+      <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Custom styles for this template -->
+      <style>
+         body {
+         padding-top: 54px;
+         }
+         @media (min-width: 992px) {
+         body {
+         padding-top: 56px;
+         }
+         }
+
+         .switch {
+            font-size: 1rem;
+            position: relative;
+          }
+          .switch input {
+            position: absolute;
+            height: 1px;
+            width: 1px;
+            background: none;
+            border: 0;
+            clip: rect(0 0 0 0);
+            clip-path: inset(50%);
+            overflow: hidden;
+            padding: 0;
+          }
+          .switch input + label {
+            position: relative;
+            min-width: calc(calc(2.375rem * .8) * 2);
+            border-radius: calc(2.375rem * .8);
+            height: calc(2.375rem * .8);
+            line-height: calc(2.375rem * .8);
+            display: inline-block;
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            vertical-align: middle;
+            text-indent: calc(calc(calc(2.375rem * .8) * 2) + .5rem);
+          }
+          .switch input + label::before,
+          .switch input + label::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(calc(2.375rem * .8) * 2);
+            bottom: 0;
+            display: block;
+          }
+          .switch input + label::before {
+            right: 0;
+            background-color: #dee2e6;
+            border-radius: calc(2.375rem * .8);
+            transition: 0.2s all;
+          }
+          .switch input + label::after {
+            top: 2px;
+            left: 2px;
+            width: calc(calc(2.375rem * .8) - calc(2px * 2));
+            height: calc(calc(2.375rem * .8) - calc(2px * 2));
+            border-radius: 50%;
+            background-color: white;
+            transition: 0.2s all;
+          }
+          .switch input:checked + label::before {
+            background-color: #08d;
+          }
+          .switch input:checked + label::after {
+            margin-left: calc(2.375rem * .8);
+          }
+          .switch input:focus + label::before {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 136, 221, 0.25);
+          }
+          .switch input:disabled + label {
+            color: #868e96;
+            cursor: not-allowed;
+          }
+          .switch input:disabled + label::before {
+            background-color: #e9ecef;
+          }
+          .switch.switch-sm {
+            font-size: 0.875rem;
+          }
+          .switch.switch-sm input + label {
+            min-width: calc(calc(1.9375rem * .8) * 2);
+            height: calc(1.9375rem * .8);
+            line-height: calc(1.9375rem * .8);
+            text-indent: calc(calc(calc(1.9375rem * .8) * 2) + .5rem);
+          }
+          .switch.switch-sm input + label::before {
+            width: calc(calc(1.9375rem * .8) * 2);
+          }
+          .switch.switch-sm input + label::after {
+            width: calc(calc(1.9375rem * .8) - calc(2px * 2));
+            height: calc(calc(1.9375rem * .8) - calc(2px * 2));
+          }
+          .switch.switch-sm input:checked + label::after {
+            margin-left: calc(1.9375rem * .8);
+          }
+          .switch.switch-lg {
+            font-size: 1.25rem;
+          }
+          .switch.switch-lg input + label {
+            min-width: calc(calc(3rem * .8) * 2);
+            height: calc(3rem * .8);
+            line-height: calc(3rem * .8);
+            text-indent: calc(calc(calc(3rem * .8) * 2) + .5rem);
+          }
+          .switch.switch-lg input + label::before {
+            width: calc(calc(3rem * .8) * 2);
+          }
+          .switch.switch-lg input + label::after {
+            width: calc(calc(3rem * .8) - calc(2px * 2));
+            height: calc(calc(3rem * .8) - calc(2px * 2));
+          }
+          .switch.switch-lg input:checked + label::after {
+            margin-left: calc(3rem * .8);
+          }
+          .switch + .switch {
+            margin-left: 1rem;
+          }
+
+          body {
+            padding: 1rem;
+          }
+
+          .dropdown-menu {
+            margin-top: .75rem;
+          }
+      </style>
+      <script src="vendor/jquery/jquery.min.js"></script>
+      <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script type="text/javascript">
+          function calculate(){
+            if (document.getElementById("garage_type").value == "none") {
+              document.getElementById("garage_sqft").value = 0;
+              document.getElementById("garage_sqft").disabled = true;
+            } else {
+              document.getElementById("garage_sqft").disabled = false;
+            }
+
+            url_string = "estimate.php?year=" + document.getElementById("year").value + "&storeys=" +  document.getElementById("storeys").value + "&bedrooms=" +  document.getElementById("bedrooms").value + "&full_bathrooms=" +  document.getElementById("full_bathrooms").value + "&half_bathrooms=" + document.getElementById("half_bathrooms").value + "&livable_sqft=" + document.getElementById("liveable_sqft").value + "&total_sqft=" + document.getElementById("total_sqft").value + "&garage_sqft=" + document.getElementById("garage_sqft").value + "&carport_sqft=" + document.getElementById("carport_sqft").value + "&has_fireplace=" + (document.getElementById("has_fireplace").checked ? '1' : '0') + "&has_pool=" + (document.getElementById("has_pool").checked ? '1' : '0') + "&has_central_heating=" + (document.getElementById("has_central_heating").checked ? '1' : '0') + "&has_central_cooling=" + (document.getElementById("has_central_cooling").checked ? '1' : '0') + "&garage_type=" + document.getElementById("garage_type").value + "&city=" + document.getElementById("city").value ;
+
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    if (xmlHttp.responseText.includes("Traceback")) {
+                      document.getElementById("price").innerHTML = "";
+                    } else {
+                      document.getElementById("price").innerHTML = xmlHttp.responseText;
+                    }
+            }
+            xmlHttp.open("GET", url_string, true); // true for asynchronous
+            xmlHttp.send(null);
+          }
+      </script>
+   </head>
+   <body onload="calculate()">
+      <!-- Navigation -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <div class="container">
+            <span class="navbar-brand">House Price Estimator <span style="color:#ccc !important;">by Shreyas Kishore</span></span>
+         </div>
+      </nav>
+      <!-- Page Content -->
+      <div class="container">
+         <br><br>
+         <form>
+            <div class="row" style="padding-top: 20px;">
+               <div class="col-lg-12">
+                  <div class="form-row">
+                     <div class="form-group col-md-4">
+                        <label for="year">Year Built</label>
+                        <input type="number" class="form-control" id="year" value="2006" onchange="calculate()" oninput="calculate()">
+                     </div>
+                     <div class="form-group col-md-4">
+                          <label for="liveable_sqft">Liveable Area (sqft)</label>
+                          <input type="number" class="form-control" id="liveable_sqft" value="2200" onchange="calculate()" oninput="calculate()">
+                       </div>
+                       <div class="form-group col-md-4">
+                          <label for="total_sqft">Total Area (sqft)</label>
+                          <input type="number" class="form-control" id="total_sqft" value="2350" onchange="calculate()" oninput="calculate()">
+                       </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12">
+                  <div class="form-row">
+                    <div class="form-group col-md-3">
+                       <label for="storeys">Number of Stories</label>
+                       <input type="number" class="form-control" id="storeys" value="1" onchange="calculate()" oninput="calculate()">
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="bedrooms">Number of Bedrooms</label>
+                       <input type="number" class="form-control" id="bedrooms" value="4" onchange="calculate()" oninput="calculate()">
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="full_bathrooms">Number of Full Baths</label>
+                       <input type="number" class="form-control" id="full_bathrooms" value="3" onchange="calculate()" oninput="calculate()">
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="half_bathrooms">Number of Half Baths</label>
+                       <input type="number" class="form-control" id="half_bathrooms" value="0" onchange="calculate()" oninput="calculate()">
+                    </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row" style="padding: 10px 0 10px;">
+               <div class="col-lg-12">
+                  <div class="form-row">
+                     <div class="form-group col-md-3">
+                       <span class="switch">
+                         <input class="switch" type="checkbox" id="has_fireplace" checked onchange="calculate()" oninput="calculate()">
+                        <label class="form-check-label" for="has_fireplace">Fireplace?</label>
+                      </span>
+                     </div>
+                     <div class="form-group col-md-3">
+                       <span class="switch">
+                         <input class="switch" type="checkbox" id="has_pool"  onchange="calculate()" oninput="calculate()">
+                        <label class="form-check-label" for="has_pool">Pool?</label>
+                      </span>
+                     </div>
+                     <div class="form-group col-md-3">
+                       <span class="switch">
+                         <input class="switch" type="checkbox" id="has_central_heating" checked onchange="calculate()" oninput="calculate()">
+                        <label class="form-check-label" for="has_central_heating">Central Heating?</label>
+                      </span>
+                     </div>
+                     <div class="form-group col-md-3">
+                       <span class="switch">
+                         <input class="switch" type="checkbox" id="has_central_cooling" checked onchange="calculate()" oninput="calculate()">
+                        <label class="form-check-label" for="has_central_cooling">Central Cooling?</label>
+                      </span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12">
+                  <div class="form-row">
+                    <div class="form-group col-md-3">
+                       <label for="city">City</label>
+                       <select id="city" class="form-control" onchange="calculate()" oninput="calculate()">
+                         <option value="Amystad">Amystad</option>
+                         <option value="Brownport" selected>Brownport</option>
+                         <option value="Chadstad">Chadstad</option>
+                         <option value="Clarkberg">Clarkberg</option>
+                         <option value="Coletown">Coletown</option>
+                         <option value="Davidfort">Davidfort</option>
+                         <option value="Davidtown">Davidtown</option>
+                         <option value="East_Amychester">East Amychester</option>
+                         <option value="East_Janiceville">East Janiceville</option>
+                         <option value="East_Justin">East Justin</option>
+                         <option value="East_Lucas">East Lucas</option>
+                         <option value="Fosterberg">Fosterberg</option>
+                         <option value="Hallfort">Hallfort</option>
+                         <option value="Jeffreyhaven">Jeffreyhaven</option>
+                         <option value="Jenniferberg">Jenniferberg</option>
+                         <option value="Joshuafurt">Joshuafurt</option>
+                         <option value="Julieberg">Julieberg</option>
+                         <option value="Justinport">Justinport</option>
+                         <option value="Lake_Carolyn">Lake Carolyn</option>
+                         <option value="Lake_Christinaport">Lake Christinaport</option>
+                         <option value="Lake_Dariusborough">Lake Dariusborough</option>
+                         <option value="Lake_Jack">Lake Jack</option>
+                         <option value="Lake_Jennifer">Lake Jennifer</option>
+                         <option value="Leahview">Leahview</option>
+                         <option value="Lewishaven">Lewishaven</option>
+                         <option value="Martinezfort">Martinezfort</option>
+                         <option value="Morrisport">Morrisport</option>
+                         <option value="New_Michele">New Michele</option>
+                         <option value="New_Robinton">New Robinton</option>
+                         <option value="North_Erinville">North Erinville</option>
+                         <option value="Port_Adamtown">Port Adamtown</option>
+                         <option value="Port_Andrealand">Port Andrealand</option>
+                         <option value="Port_Daniel">Port Daniel</option>
+                         <option value="Port_Jonathanborough">Port Jonathanborough</option>
+                         <option value="Richardport">Richardport</option>
+                         <option value="Rickytown">Rickytown</option>
+                         <option value="Scottberg">Scottberg</option>
+                         <option value="South_Anthony">South Anthony</option>
+                         <option value="South_Stevenfurt">South Stevenfurt</option>
+                         <option value="Toddshire">Toddshire</option>
+                         <option value="Wendybury">Wendybury</option>
+                         <option value="West_Ann">West Ann</option>
+                         <option value="West_Brittanyview">West Brittanyview</option>
+                         <option value="West_Gerald">West Gerald</option>
+                         <option value="West_Gregoryview">West Gregoryview</option>
+                         <option value="West_Lydia">West Lydia</option>
+                         <option value="West_Terrence">West Terrence</option>
+                       </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="garage_type">Garage Type</label>
+                       <select id="garage_type" class="form-control" onchange="calculate()" oninput="calculate()">
+                          <option value="attached">Attached</option>
+                          <option value="detached">Detached</option>
+                          <option value="none" selected>None</option>
+                       </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="garage_sqft">Garage Area (sqft)</label>
+                       <input type="number" class="form-control" id="garage_sqft" value="0" disabled onchange="calculate()" oninput="calculate()">
+                    </div>
+                    <div class="form-group col-md-3">
+                       <label for="carport_sqft">Carport Area (sqft)</label>
+                       <input type="number" class="form-control" id="carport_sqft" value="0" onchange="calculate()" oninput="calculate()">
+                    </div>
+
+                  </div>
+               </div>
+            </div>
+         </form>
+         <hr>
+
+        <div class="col-lg-12 text-center">
+          <h2 class="mt-5">The estimated sale price of this house is <span style="font-weight:700;">$</span><span style="font-weight:700;" id="price"></span></h2>
+          <p class="lead">according to the machine learing model.</p>
+          <p>Try tweaking the parameters and see the price go up and down.</p>
+          <p>&nbsp</p>
+      </div>
+      <hr>
+      <div class="col-lg-12 text-center">
+        <p class="lead">Stats</p>
+        <p>This model was trained with <a href="ml_house_data_set_updated_train.csv">this dataset</a> and tested against <a href="ml_house_data_set_updated_test.csv">this dataset</a></p>
+        <p>The model achieves a standard deviation of <span style="font-weight:700;">3.15%</span> with the training data and <span style="font-weight:700;">4.23%</span> with the test data.</p>
+    </div>
+    </div>
+      </div>
+      <script type="text/javascript">calculate()</script>
+   </body>
+</html>
